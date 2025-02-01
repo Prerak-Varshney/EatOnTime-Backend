@@ -1,6 +1,7 @@
-import { Restaurant } from '../models/restaurants.js';
+import { Restaurant } from '../models/restaurant.model.js';
+import { Product } from '../models/product.model.js';
 import bcrypt from 'bcrypt';
-const registerRestaurant = async (req, res) => {
+export const registerRestaurant = async (req, res) => {
     //TODO: Send a welcome email to the restaurant.
     //TODO: Handle the token generation.
     //TODO: Handle verify email and phone number.
@@ -50,8 +51,7 @@ const registerRestaurant = async (req, res) => {
         return res.status(500).json({ success: false, successType: "error", message: error.message });
     }
 }
-
-const loginRestaurant = async (req, res) => {
+export const loginRestaurant = async (req, res) => {
     //TODO:  Handle the token generation.
 
     const { clientLoginIdorPhone, password } = req.body;
@@ -87,5 +87,33 @@ const loginRestaurant = async (req, res) => {
         return res.status(500).json({ success: false, successType: "error", message: error.message });
     }
 }
-
-export { registerRestaurant, loginRestaurant };
+export const getRestaurants = async (req, res) => {
+    try{
+        const restaurants = await Restaurant.find();
+        return res.status(200).json({ success: true, data: restaurants });
+    }catch(error){
+        return res.status(500).json({ success: false, successType: "error", message: error.message });
+    }
+}
+export const getRestaurantById = async (req, res) => {
+    const {restaurantId} = req.params;
+    try {
+        const restaurant = await Restaurant.findById(restaurantId);
+        return res.status(200).json({success: true, data: restaurant});
+    } catch (error) {
+        return res.status(500).json({success: false, successType: "error", message: error.message});
+    }
+}
+export const deleteRestaurant = async (req, res) => {
+    const {restaurantId} = req.params;
+    try{
+        await Product.deleteMany({restaurantId});
+        const deletedRestaurant = await Restaurant.findByIdAndDelete(restaurantId);
+        if(!deletedRestaurant){
+            return res.status(400).json({success: false, message: 'Restaurant does not exist'});
+        }
+        return res.status(200).json({success: true, message: 'Restaurant deleted successfully'});
+    }catch (error){
+        return res.status(500).json({success: false, successType: "error", message: error.message});
+    }
+}

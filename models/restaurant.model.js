@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Product } from './product.js'
+import { Product } from './product.model.js'
 const restaurantSchema = new mongoose.Schema({
     auth: {
         restaurantName: {

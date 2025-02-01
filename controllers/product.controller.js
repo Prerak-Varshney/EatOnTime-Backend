@@ -1,5 +1,5 @@
-import {Product} from "../models/product.js";
-import {Restaurant} from "../models/restaurants.js";
+import {Product} from "../models/product.model.js";
+import {Restaurant} from "../models/restaurant.model.js";
 export const createProduct = async (req, res) => {
     //Bring all the data from the request body
     const { restaurantId, name, description, price, discount, category, itemType, mainImage, image1, image2, image3, image4, availability, estimatedPreparationTime, rating, totalRatings, isRecommended} = req.body;
@@ -9,7 +9,6 @@ export const createProduct = async (req, res) => {
     }
 
     try {
-
         const existingRestaurant = await Restaurant.findById(restaurantId);
 
         if(!existingRestaurant){
@@ -26,7 +25,7 @@ export const createProduct = async (req, res) => {
             description,
             price,
             discount,
-            finalPrice: price - ((discount/price) * 100),
+            finalPrice: price - (price * (discount / 100)),
             category,
             itemType,
             images: {
@@ -55,6 +54,49 @@ export const createProduct = async (req, res) => {
         return res.status(500).json({ success: false, successType: "error", message: error.message });
     }
 };
+export const updateProduct = async (req, res) => {
+  const { productId } = req.params;
+    const { name, description, price, discount, category, itemType, mainImage, image1, image2, image3, image4, availability, estimatedPreparationTime, rating, totalRatings, isRecommended } = req.body;
+
+    try{
+        if(!productId){
+            return res.status(206).json({ success: false, message: 'All fields are required' });
+        }
+
+        const existingProduct = await Product.findById(productId);
+
+        if(!existingProduct){
+            return res.status(400).json({ success: false, message: 'Product does not exist' });
+        }
+
+        await Product.findByIdAndUpdate(productId, {
+            name,
+            description,
+            price,
+            discount,
+            finalPrice: price - (price * (discount / 100)),
+            category,
+            itemType,
+            images: {
+                mainImage,
+                image1,
+                image2,
+                image3,
+                image4
+            },
+            availability,
+            estimatedPreparationTime,
+            rating,
+            totalRatings,
+            isRecommended
+        })
+
+        return res.status(200).json({ success: true, message: 'Product updated successfully' });
+
+    }catch (error){
+        return res.status(500).json({ success: false, successType: "error", message: error.message });
+    }
+};
 export const deleteProduct = async (req, res) => {
   const { productId } = req.params;
     if(!productId){
@@ -73,6 +115,28 @@ export const deleteProduct = async (req, res) => {
         await Product.findByIdAndDelete(productId);
 
         return res.status(200).json({ success: true, message: 'Product deleted successfully' });
+
+    }catch (error){
+        return res.status(500).json({ success: false, successType: "error", message: error.message });
+    }
+};
+export const getProducts = async (req, res) => {
+    try{
+        const products = await Product.find();
+        return res.status(200).json({ success: true, products });
+
+    }catch (error){
+        return res.status(500).json({ success: false, successType: "error", message: error.message });
+    }
+};
+export const getProductById = async (req, res) => {
+    const { productId } = req.params;
+    if(!productId){
+        return res.status(206).json({ success: false, message: 'All fields are required' });
+    }
+    try{
+        const product = await Product.findById(productId);
+        return res.status(200).json({ success: true, product });
 
     }catch (error){
         return res.status(500).json({ success: false, successType: "error", message: error.message });
