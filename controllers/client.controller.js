@@ -1,4 +1,4 @@
-import Client from "../models/client.model.js";
+import {Client} from "../models/client.model.js";
 import bcrypt from "bcrypt";
 
 export const register = async (req, res) => {

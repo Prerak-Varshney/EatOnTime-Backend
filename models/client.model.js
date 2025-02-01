@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const clientSchema = new Mongoose.Schema({
+const clientSchema = new mongoose.Schema({
     name: {
         trim: true,
         type: String,
@@ -86,4 +86,4 @@ const clientSchema = new Mongoose.Schema({
     }
 }, { timestamps: true });
 
-const Client = mongoose.model('Client', clientSchema);
+export const Client = mongoose.model('Client', clientSchema);

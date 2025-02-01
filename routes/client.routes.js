@@ -12,6 +12,7 @@ router.post('/register', register);
 router.post('/login', login);
 router.put('/update-client/:clientId', updateClient);
 router.delete('/delete-client/:clientId', deleteClient);
+router.get('/get-clients', getClients);
 router.get('/get-client/:clientId', getClientById);
 
 export default router;
