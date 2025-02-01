@@ -6,9 +6,9 @@ export const registerRestaurant = async (req, res) => {
     //TODO: Handle the token generation.
     //TODO: Handle verify email and phone number.
 
-    const { restaurantName, email, contact, country, state, city, address, password, confirmPassword } = req.body;
+    const { restaurantName, email, contact, country, state, city, postalCode, address, password, confirmPassword } = req.body;
 
-    if (!restaurantName || !email || !contact || !country || !state || !city || !address || !password || !confirmPassword) {
+    if (!restaurantName || !email || !contact || !country || !state || !city || !postalCode || !address || !password || !confirmPassword) {
         return res.status(206).json({ success: false, message: 'All fields are required' });
     }
 
@@ -24,7 +24,7 @@ export const registerRestaurant = async (req, res) => {
             ]
         });
 
-        if(existingRestaurant){
+        if(existingRestaurant && existingRestaurant.auth.isEmailVerified && existingRestaurant.auth.isContactVerified){
             return res.status(400).json({ success: false, message: 'Restaurant already exists' });
         }
 
@@ -38,6 +38,7 @@ export const registerRestaurant = async (req, res) => {
                 country,
                 state,
                 city,
+                postalCode,
                 address,
                 password: hashedPassword,
             }
@@ -54,16 +55,16 @@ export const registerRestaurant = async (req, res) => {
 export const loginRestaurant = async (req, res) => {
     //TODO:  Handle the token generation.
 
-    const { clientLoginIdorPhone, password } = req.body;
+    const { restaurantLoginEmailOrPhone, password } = req.body;
 
-    if(!password || !clientLoginIdorPhone) {
+    if(!password || !restaurantLoginEmailOrPhone) {
         return res.status(206).json({ success: false, message: 'All fields are required' });
     }
     try{
         const existingRestaurant = await Restaurant.findOne({
             $or: [
-                { "auth.email": clientLoginIdorPhone },
-                { "auth.contact": clientLoginIdorPhone }
+                { "auth.email": restaurantLoginEmailOrPhone },
+                { "auth.contact": restaurantLoginEmailOrPhone }
             ]
         });
 
@@ -101,6 +102,35 @@ export const getRestaurantById = async (req, res) => {
         const restaurant = await Restaurant.findById(restaurantId);
         return res.status(200).json({success: true, data: restaurant});
     } catch (error) {
+        return res.status(500).json({success: false, successType: "error", message: error.message});
+    }
+}
+export const updateRestaurant = async (req, res) => {
+    const {restaurantId} = req.params;
+    const {restaurantName, email, contact, country, state, city, postalCode, address} = req.body;
+    try{
+        if(!restaurantId){
+            return res.status(206).json({success: false, message: 'All fields are required'});
+        }
+
+        const updatedRestaurant = await Restaurant.findByIdAndUpdate(restaurantId, {
+            auth: {
+                restaurantName,
+                email,
+                contact,
+                country,
+                state,
+                city,
+                postalCode,
+                address
+            }
+        });
+        if(!updatedRestaurant){
+            return res.status(400).json({success: false, message: 'Restaurant does not exist'});
+        }
+        return res.status(200).json({success: true, message: 'Restaurant updated successfully'});
+
+    }catch(error){
         return res.status(500).json({success: false, successType: "error", message: error.message});
     }
 }
