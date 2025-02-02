@@ -13,7 +13,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send('Welcome to Restaurant API');
 })
-app.use('/api/v1/restaurant-auth', restaurantRoute);
+app.use('/api/v1/restaurant', restaurantRoute);
 app.use('/api/v1/product', productRoute);
 app.use('/api/v1/client', clientRoute)
 
