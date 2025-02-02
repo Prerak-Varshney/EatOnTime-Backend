@@ -35,6 +35,8 @@
 
 ### Client
 
+    /client
+
 #### Endpoints
 
     GET /get-clients
