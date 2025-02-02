@@ -81,12 +81,17 @@ export const login = async (req, res) => {
 export const updateClient = async (req, res) => {
     const {clientId} = req.params;
     const {name, email, phone, password} = req.body;
+    if(!clientId) {
+        return res.status(206).json({success: false, message: "Client ID is required"});
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
     try {
         const client = await Client.findByIdAndUpdate(clientId, {
             name,
             email,
             phone,
-            password
+            hashedPassword
         })
         if (!client) {
             return res.status(404).json({success: false, message: "Client not found"});
@@ -116,7 +121,7 @@ export const deleteClient = async (req, res) => {
 export const getClientById = async (req, res) => {
     const {clientId} = req.params;
     try{
-        const client = await Client.findById(clientId);
+        const client = await Client.findById(clientId).select("-password").lean();
         if(!client) {
             return res.status(404).json({success: false, message: "Client not found"});
         }
@@ -128,7 +133,7 @@ export const getClientById = async (req, res) => {
 };
 export const getClients = async (req, res) => {
     try{
-        const clients = await Client.find();
+        const clients = await Client.find().select("-password").lean();
         return res.status(200).json({success: true, clients: clients});
     }catch(error){
         return res.status(500).json({success: false, message: error.message});

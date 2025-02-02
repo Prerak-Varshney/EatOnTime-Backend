@@ -1,8 +1,11 @@
 import {Product} from "../models/product.model.js";
 import {Restaurant} from "../models/restaurant.model.js";
+import setImageToImagekit from "../utils/imagekit/imagekit.config.js";
+
 export const createProduct = async (req, res) => {
     //Bring all the data from the request body
-    const { restaurantId, name, description, price, discount, category, itemType, mainImage, image1, image2, image3, image4, availability, estimatedPreparationTime, rating, totalRatings, isRecommended} = req.body;
+
+    const { restaurantId, name, description, price, discount, category, itemType, availability, estimatedPreparationTime, rating, totalRatings, isRecommended} = req.body;
 
     if(!restaurantId || !name || !description || !price || !category || !itemType){
         return res.status(206).json({ success: false, message: 'All fields are required' });
@@ -19,6 +22,22 @@ export const createProduct = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Email or contact not verified' });
         }
 
+        const mainProductImageLocalPath = req.files?.mainImage[0].path;
+        const image1LocalPath = req.files?.image1 ? req.files?.image1[0].path : '';
+        const image2LocalPath = req.files?.image2 ? req.files?.image2[0].path : '';
+        const image3LocalPath = req.files?.image3 ? req.files?.image3[0].path : '';
+        const image4LocalPath = req.files?.image4 ? req.files?.image4[0].path : '';
+
+        if(!mainProductImageLocalPath){
+            return res.status(206).json({ success: false, message: 'Main image is required' });
+        }
+
+        const mainImageData = await setImageToImagekit(mainProductImageLocalPath);
+        const image1Data = image1LocalPath ? await setImageToImagekit(image1LocalPath) : '';
+        const image2Data = image2LocalPath ? await setImageToImagekit(image2LocalPath) : '';
+        const image3Data = image3LocalPath ? await setImageToImagekit(image3LocalPath) : '';
+        const image4Data = image4LocalPath ? await setImageToImagekit(image4LocalPath) : '';
+
         const newProduct = new Product({
             restaurantId,
             name,
@@ -29,11 +48,11 @@ export const createProduct = async (req, res) => {
             category,
             itemType,
             images: {
-                mainImage,
-                image1,
-                image2,
-                image3,
-                image4
+                mainImage: mainImageData.url,
+                image1: image1Data.url,
+                image2: image2Data.url,
+                image3: image3Data.url,
+                image4: image4Data.url
             },
             availability,
             estimatedPreparationTime,
@@ -55,8 +74,24 @@ export const createProduct = async (req, res) => {
     }
 };
 export const updateProduct = async (req, res) => {
-  const { productId } = req.params;
-    const { name, description, price, discount, category, itemType, mainImage, image1, image2, image3, image4, availability, estimatedPreparationTime, rating, totalRatings, isRecommended } = req.body;
+    const { productId } = req.params;
+    const { name, description, price, discount, category, itemType, availability, estimatedPreparationTime, rating, totalRatings, isRecommended } = req.body;
+
+    const mainProductImageLocalPath = req.files?.mainImage[0].path;
+    const image1LocalPath = req.files?.image1 ? req.files?.image1[0].path : '';
+    const image2LocalPath = req.files?.image2 ? req.files?.image2[0].path : '';
+    const image3LocalPath = req.files?.image3 ? req.files?.image3[0].path : '';
+    const image4LocalPath = req.files?.image4 ? req.files?.image4[0].path : '';
+
+    if(!mainProductImageLocalPath){
+        return res.status(206).json({ success: false, message: 'Main image is required' });
+    }
+
+    const mainImageData = await setImageToImagekit(mainProductImageLocalPath);
+    const image1Data = image1LocalPath ? await setImageToImagekit(image1LocalPath) : '';
+    const image2Data = image2LocalPath ? await setImageToImagekit(image2LocalPath) : '';
+    const image3Data = image3LocalPath ? await setImageToImagekit(image3LocalPath) : '';
+    const image4Data = image4LocalPath ? await setImageToImagekit(image4LocalPath) : '';
 
     try{
         if(!productId){
@@ -78,11 +113,11 @@ export const updateProduct = async (req, res) => {
             category,
             itemType,
             images: {
-                mainImage,
-                image1,
-                image2,
-                image3,
-                image4
+                mainImage: mainImageData.url,
+                image1: image1Data.url,
+                image2: image2Data.url,
+                image3: image3Data.url,
+                image4: image4Data.url
             },
             availability,
             estimatedPreparationTime,
@@ -122,7 +157,7 @@ export const deleteProduct = async (req, res) => {
 };
 export const getProducts = async (req, res) => {
     try{
-        const products = await Product.find();
+        const products = await Product.find().lean();
         return res.status(200).json({ success: true, products });
 
     }catch (error){
@@ -135,7 +170,7 @@ export const getProductById = async (req, res) => {
         return res.status(206).json({ success: false, message: 'All fields are required' });
     }
     try{
-        const product = await Product.findById(productId);
+        const product = await Product.findById(productId).lean();
         return res.status(200).json({ success: true, product });
 
     }catch (error){

@@ -90,7 +90,7 @@ export const loginRestaurant = async (req, res) => {
 }
 export const getRestaurants = async (req, res) => {
     try{
-        const restaurants = await Restaurant.find();
+        const restaurants = await Restaurant.find().select("-auth.password").lean();
         return res.status(200).json({ success: true, data: restaurants });
     }catch(error){
         return res.status(500).json({ success: false, successType: "error", message: error.message });
@@ -99,7 +99,7 @@ export const getRestaurants = async (req, res) => {
 export const getRestaurantById = async (req, res) => {
     const {restaurantId} = req.params;
     try {
-        const restaurant = await Restaurant.findById(restaurantId);
+        const restaurant = await Restaurant.findById(restaurantId).select("-auth.password").lean();
         return res.status(200).json({success: true, data: restaurant});
     } catch (error) {
         return res.status(500).json({success: false, successType: "error", message: error.message});
@@ -107,24 +107,28 @@ export const getRestaurantById = async (req, res) => {
 }
 export const updateRestaurant = async (req, res) => {
     const {restaurantId} = req.params;
-    const {restaurantName, email, contact, country, state, city, postalCode, address} = req.body;
+    const {restaurantName, email, contact, country, state, city, postalCode, address, password} = req.body;
     try{
         if(!restaurantId){
             return res.status(206).json({success: false, message: 'All fields are required'});
         }
 
-        const updatedRestaurant = await Restaurant.findByIdAndUpdate(restaurantId, {
-            auth: {
-                restaurantName,
-                email,
-                contact,
-                country,
-                state,
-                city,
-                postalCode,
-                address
-            }
-        });
+        const updateFields = {};
+        if (restaurantName) updateFields["auth.restaurantName"] = restaurantName;
+        if (email) updateFields["auth.email"] = email;
+        if (contact) updateFields["auth.contact"] = contact;
+        if (country) updateFields["auth.country"] = country;
+        if (state) updateFields["auth.state"] = state;
+        if (city) updateFields["auth.city"] = city;
+        if (postalCode) updateFields["auth.postalCode"] = postalCode;
+        if (address) updateFields["auth.address"] = address;
+        if (password) updateFields["auth.password"] = await bcrypt.hash(password, 12);
+
+        const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+            restaurantId,
+            { $set: updateFields },
+        );
+
         if(!updatedRestaurant){
             return res.status(400).json({success: false, message: 'Restaurant does not exist'});
         }
