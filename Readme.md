@@ -86,3 +86,26 @@
     PUT /update-product/:productId
 
     DELETE /delete-product/:productId
+
+## Environment Variables 
+
+    PORT=3000
+
+    MONGODB_URI=<mongodb_uri>
+
+    JWT_SECRET=<jwt secret>
+
+    IMAGEKIT_PUBLIC_KEY=<public_key>
+
+    IMAGEKIT_PRIVATE_KEY=<private_key>
+
+    IMAGEKIT_URL_ENDPOINT=<Your Imagekit url>
+
+## Run
+
+#### Create a public/uploads folder in the root directory to handle image uploads
+#### Create a '.env' file to setup envorinment variables.
+
+    npm install
+
+    npm start
