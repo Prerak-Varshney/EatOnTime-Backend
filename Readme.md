@@ -1,3 +1,9 @@
+# TODO
+- Protect the routes and api's with jwt
+- Access tokens and refresh tokens
+- Add logout
+- Add orders
+
 ### Database
 
     - MongoDb
@@ -75,7 +81,7 @@
 
 ### Product
 
-    /product
+    /restaurant/product
 
 #### Endpoints
 

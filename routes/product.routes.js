@@ -24,6 +24,7 @@ router.route('/update-product/:productId').put(
     ]),
     updateProduct
 );
+
 router.get('/get-products', getProducts);
 router.get('/get-product/:productId', getProductById);
 router.delete('/delete-product/:productId', deleteProduct);

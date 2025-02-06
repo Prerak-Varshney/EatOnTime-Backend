@@ -56,7 +56,7 @@ const restaurantSchema = new mongoose.Schema({
     products: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product'
-    }]
+    }],
 },
     {timestamps: true}
 );

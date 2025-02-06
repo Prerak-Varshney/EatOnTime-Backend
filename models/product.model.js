@@ -30,11 +30,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    category: {
+    category: [{
         type: String,
-        enum: ['Starter', 'Main Course', 'Dessert', 'Beverage', 'Fast Food', 'Seafood', 'Indian', 'Chinese', 'Italian', 'Mexican'],
         required: true
-    },
+    }],
     itemType: {
         type: String,
         enum: ['Veg', 'Non-Veg'],

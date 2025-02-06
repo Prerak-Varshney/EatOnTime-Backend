@@ -32,11 +32,26 @@ export const createProduct = async (req, res) => {
             return res.status(206).json({ success: false, message: 'Main image is required' });
         }
 
-        const mainImageData = await setImageToImagekit(mainProductImageLocalPath);
-        const image1Data = image1LocalPath ? await setImageToImagekit(image1LocalPath) : '';
-        const image2Data = image2LocalPath ? await setImageToImagekit(image2LocalPath) : '';
-        const image3Data = image3LocalPath ? await setImageToImagekit(image3LocalPath) : '';
-        const image4Data = image4LocalPath ? await setImageToImagekit(image4LocalPath) : '';
+        const imageUploadPromises = [
+            setImageToImagekit(mainProductImageLocalPath),
+            image1LocalPath ? setImageToImagekit(image1LocalPath) : null,
+            image2LocalPath ? setImageToImagekit(image2LocalPath) : null,
+            image3LocalPath ? setImageToImagekit(image3LocalPath) : null,
+            image4LocalPath ? setImageToImagekit(image4LocalPath) : null,
+        ];
+
+        const [mainImageData, image1Data, image2Data, image3Data, image4Data] = await Promise.all(imageUploadPromises);
+
+        if (!mainImageData) {
+            return res.status(206).json({ success: false, message: "Main image upload failed" });
+        }
+
+
+        // const mainImageData = await setImageToImagekit(mainProductImageLocalPath);
+        // const image1Data = image1LocalPath ? await setImageToImagekit(image1LocalPath) : '';
+        // const image2Data = image2LocalPath ? await setImageToImagekit(image2LocalPath) : '';
+        // const image3Data = image3LocalPath ? await setImageToImagekit(image3LocalPath) : '';
+        // const image4Data = image4LocalPath ? await setImageToImagekit(image4LocalPath) : '';
 
         const newProduct = new Product({
             restaurantId,
@@ -87,11 +102,21 @@ export const updateProduct = async (req, res) => {
         return res.status(206).json({ success: false, message: 'Main image is required' });
     }
 
-    const mainImageData = await setImageToImagekit(mainProductImageLocalPath);
-    const image1Data = image1LocalPath ? await setImageToImagekit(image1LocalPath) : '';
-    const image2Data = image2LocalPath ? await setImageToImagekit(image2LocalPath) : '';
-    const image3Data = image3LocalPath ? await setImageToImagekit(image3LocalPath) : '';
-    const image4Data = image4LocalPath ? await setImageToImagekit(image4LocalPath) : '';
+    const imageUploadPromises = [
+        setImageToImagekit(mainProductImageLocalPath),
+        image1LocalPath ? setImageToImagekit(image1LocalPath) : null,
+        image2LocalPath ? setImageToImagekit(image2LocalPath) : null,
+        image3LocalPath ? setImageToImagekit(image3LocalPath) : null,
+        image4LocalPath ? setImageToImagekit(image4LocalPath) : null,
+    ];
+
+    const [mainImageData, image1Data, image2Data, image3Data, image4Data] = await Promise.all(imageUploadPromises);
+
+    // const mainImageData = await setImageToImagekit(mainProductImageLocalPath);
+    // const image1Data = image1LocalPath ? await setImageToImagekit(image1LocalPath) : '';
+    // const image2Data = image2LocalPath ? await setImageToImagekit(image2LocalPath) : '';
+    // const image3Data = image3LocalPath ? await setImageToImagekit(image3LocalPath) : '';
+    // const image4Data = image4LocalPath ? await setImageToImagekit(image4LocalPath) : '';
 
     try{
         if(!productId){
