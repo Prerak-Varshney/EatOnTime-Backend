@@ -37,7 +37,8 @@ const productSchema = new mongoose.Schema({
     itemType: {
         type: String,
         enum: ['Veg', 'Non-Veg'],
-        required: true
+        required: true,
+        trim: true
     },
     images: {
         mainImage: {
@@ -59,7 +60,8 @@ const productSchema = new mongoose.Schema({
     },
     availability: {
         type: Boolean,
-        default: true
+        default: true,
+        trim: true
     },
     estimatedPreparationTime: {
         type: Number,

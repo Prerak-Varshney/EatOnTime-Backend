@@ -1,6 +1,10 @@
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
 import { Restaurant } from '../models/restaurant.model.js';
 import { Product } from '../models/product.model.js';
-import bcrypt from 'bcrypt';
+import {JWT_EXPIRES_IN, JWT_SECRET} from "../config/env.js";
+
 export const registerRestaurant = async (req, res) => {
     //TODO: Send a welcome email to the restaurant.
     //TODO: Handle the token generation.
@@ -27,6 +31,8 @@ export const registerRestaurant = async (req, res) => {
         if(existingRestaurant && existingRestaurant.auth.isEmailVerified && existingRestaurant.auth.isContactVerified){
             return res.status(400).json({ success: false, message: 'Restaurant already exists' });
         }
+
+        const token = jwt.sign({ restaurantId: existingRestaurant._id}, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -82,12 +88,15 @@ export const loginRestaurant = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
 
+        const token = jwt.sign({ restaurantId: existingRestaurant._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
         return res.status(200).json({ success: true, message: 'Login successful' });
 
     }catch(error){
         return res.status(500).json({ success: false, successType: "error", message: error.message });
     }
 }
+
 export const getRestaurants = async (req, res) => {
     try{
         const restaurants = await Restaurant.find().select("-auth.password").lean();

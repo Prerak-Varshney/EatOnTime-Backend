@@ -1,15 +1,14 @@
 // SDK initialization
 
 import ImageKit from 'imagekit';
-import dotenv from 'dotenv';
 import fs from 'fs';
 
-dotenv.config();
+import {IMAGEKIT_PRIVATE_KEY, IMAGEKIT_PUBLIC_KEY, IMAGEKIT_URL_ENDPOINT} from "./env.js";
 
 let imagekit = new ImageKit({
-    publicKey : process.env.IMAGEKIT_PUBLIC_KEY,
-    privateKey : process.env.IMAGEKIT_PRIVATE_KEY,
-    urlEndpoint : process.env.IMAGEKIT_URL_ENDPOINT
+    publicKey : IMAGEKIT_PUBLIC_KEY,
+    privateKey : IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint : IMAGEKIT_URL_ENDPOINT
 });
 
 export default async function setImageToImagekit(filePath) {
@@ -24,6 +23,8 @@ export default async function setImageToImagekit(filePath) {
         });
 
         console.log("Upload Successful:", response);
+        //remove image from file path
+        fs.unlinkSync(filePath);
         return response;
     } catch (error) {
         console.error("Error uploading image:", error);

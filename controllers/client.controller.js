@@ -1,5 +1,8 @@
-import {Client} from "../models/client.model.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+import {Client} from "../models/client.model.js";
+import {JWT_EXPIRES_IN, JWT_SECRET} from "../config/env.js";
 
 export const register = async (req, res) => {
     //TODO : Send a welcome email to the client.
@@ -11,7 +14,7 @@ export const register = async (req, res) => {
         return res.status(206).json({success: false, message: "All fields are required"});
     }
     if(password !== confirmPassword) {
-        return res.status(400).json({success: false, message: "Password and confirmPassword do not match"});
+        return res.status(400).json({success: false, message: "Password and confirm Password do not match"});
     }
 
     try{
@@ -25,6 +28,8 @@ export const register = async (req, res) => {
         if(existingClient && existingClient.isEmailVerified && existingClient.isPhoneVerified) {
             return res.status(400).json({success: false, message: "Client already exists"});
         }
+
+        const token = jwt.sign({ clientId: existingClient._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -72,12 +77,15 @@ export const login = async (req, res) => {
             return res.status(400).json({success: false, message: "Invalid credentials"});
         }
 
+        const token = jwt.sign({ clientId: client._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
         return res.status(200).json({success: true, message: "Login successful"});
 
     }catch(error){
         return res.status(500).json({success: false, message: error.message});
     }
 };
+export const logoutClient = async (req, res) => { };
 export const updateClient = async (req, res) => {
     const {clientId} = req.params;
     const {name, email, phone, password} = req.body;
