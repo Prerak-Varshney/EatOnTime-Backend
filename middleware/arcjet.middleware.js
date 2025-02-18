@@ -2,8 +2,7 @@ import aj from '../config/arcjet.config.js';
 
 const arcjetMiddleware = async(req, res, next) => {
     try{
-        const decision = await aj.protect(req, { requested: 5 }); // Deduct 5 tokens from the bucket
-        console.log("Arcjet decision", decision);
+        const decision = await aj.protect(req, { requested: 1 }); // Deduct 5 tokens from the bucket
 
         if(decision.isDenied()){
             if(decision.reason.isRateLimit()) return res.status(429).json({ message: 'Rate limit exceeded' });

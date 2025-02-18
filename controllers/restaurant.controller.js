@@ -90,7 +90,7 @@ export const loginRestaurant = async (req, res) => {
 
         const token = jwt.sign({ restaurantId: existingRestaurant._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
-        return res.status(200).json({ success: true, message: 'Login successful' });
+        return res.status(200).json({ success: true, token, message: 'Login successful' });
 
     }catch(error){
         return res.status(500).json({ success: false, successType: "error", message: error.message });
@@ -106,9 +106,8 @@ export const getRestaurants = async (req, res) => {
     }
 }
 export const getRestaurantById = async (req, res) => {
-    const {restaurantId} = req.params;
     try {
-        const restaurant = await Restaurant.findById(restaurantId).select("-auth.password").lean();
+        const restaurant = await Restaurant.findById(req.params.restaurantId).select("-auth.password").lean();
         return res.status(200).json({success: true, data: restaurant});
     } catch (error) {
         return res.status(500).json({success: false, successType: "error", message: error.message});

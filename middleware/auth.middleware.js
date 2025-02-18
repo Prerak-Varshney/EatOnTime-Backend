@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import Restaurant from '../models/restaurant.model.js';
+import { Restaurant } from '../models/restaurant.model.js';
 import {JWT_SECRET} from "../config/env.js";
 
 const authorize = async (req, res, next) => {
@@ -19,7 +19,9 @@ const authorize = async (req, res, next) => {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        req.restaurantId = restaurant;
+
+        req.restaurant = restaurant;
+        console.log(req.params);
 
         next();
 
@@ -27,3 +29,5 @@ const authorize = async (req, res, next) => {
         res.status(401).json({ message: "Unauthorized", error: error.message });
     }
 }
+
+export default authorize;
