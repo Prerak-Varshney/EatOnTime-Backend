@@ -4,7 +4,7 @@ import {upload} from "../middleware/multer.middleware.js";
 
 const router = express.Router();
 
-router.route('/create-product').post(
+router.route('/').post(
     upload.fields([
         { name: 'mainImage', maxCount: 1 },
         { name: 'image1', maxCount: 1 },
@@ -14,7 +14,7 @@ router.route('/create-product').post(
     ]),
     createProduct
 );
-router.route('/update-product/:productId').put(
+router.route('/:productId').put(
     upload.fields([
         { name: 'mainImage', maxCount: 1 },
         { name: 'image1', maxCount: 1 },
@@ -25,8 +25,8 @@ router.route('/update-product/:productId').put(
     updateProduct
 );
 
-router.get('/get-products', getProducts);
-router.get('/get-product/:productId', getProductById);
-router.delete('/delete-product/:productId', deleteProduct);
+router.get('/', getProducts);
+router.get('/:productId', getProductById);
+router.delete('/:productId', deleteProduct);
 
 export default router;

@@ -45,13 +45,15 @@
 
 #### Endpoints
 
+    POST /register
+
+    POST /login
+
+    POST /logout
+
     GET /get-clients
 
     GET /get-client/:clientId
-
-    POST /register
-    
-    POST /login
 
     PUT /update-client/:clientId
 
@@ -61,39 +63,41 @@
 
 ### Restaurant
 
-    /restaurant
+    /restaurants
 
 #### Endpoints
     
-    GET /get-restaurants
-
-    GET /get-restaurant/:restaurantId
-
     POST /register
 
     POST /login
 
-    PUT /update-restaurant/:restaurantId
+    POST /logout
 
-    DELETE /delete-restaurant/:restaurantId
+    GET /
+
+    GET /:restaurantId
+
+    PUT /:restaurantId
+
+    DELETE /:restaurantId
 
     NOTE: 'DELETE' will delete restaurant and all the products associated with it.
 
-### Product
+### Products
 
-    /restaurant/product
+    /products
 
 #### Endpoints
 
-    GET /get-products
+    GET /
 
-    GET /get-product/:productId
+    GET /:productId
 
-    POST /add-product
+    POST /
 
-    PUT /update-product/:productId
+    PUT /:productId
 
-    DELETE /delete-product/:productId
+    DELETE /:productId
 
 ## Environment Variables 
 

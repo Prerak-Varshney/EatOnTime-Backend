@@ -5,10 +5,14 @@ const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
-router.put('/update-client/:clientId', updateClient);
-router.put('/set-client-addresses/:clientId', setClientAddresses);
-router.get('/get-clients', getClients);
-router.get('/get-client/:clientId', getClientById);
-router.delete('/delete-client/:clientId', deleteClient);
+router.post('/logout', (req, res) => {
+    res.send({title: "Logout"})
+})
+
+router.get('/', getClients);
+router.get('/:clientId', getClientById);
+router.put('/:clientId', updateClient);
+router.put('/:clientId', setClientAddresses);
+router.delete('/:clientId', deleteClient);
 
 export default router;

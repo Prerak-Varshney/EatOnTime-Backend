@@ -25,8 +25,8 @@ app.use(cors());
 app.get('/', (req, res) => {
     res.send('Welcome to Restaurant API');
 })
-app.use('/api/v1/restaurant', restaurantRoute);
-app.use('/api/v1/restaurant/product', productRoute);
+app.use('/api/v1/restaurants', restaurantRoute);
+app.use('/api/v1/products', productRoute);
 app.use('/api/v1/client', clientRoute)
 
 app.listen(PORT, async() => {

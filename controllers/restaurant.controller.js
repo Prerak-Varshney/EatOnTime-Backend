@@ -7,7 +7,6 @@ import {JWT_EXPIRES_IN, JWT_SECRET} from "../config/env.js";
 
 export const registerRestaurant = async (req, res) => {
     //TODO: Send a welcome email to the restaurant.
-    //TODO: Handle the token generation.
     //TODO: Handle verify email and phone number.
 
     const { restaurantName, email, contact, country, state, city, postalCode, address, password, confirmPassword } = req.body;
@@ -59,8 +58,6 @@ export const registerRestaurant = async (req, res) => {
     }
 }
 export const loginRestaurant = async (req, res) => {
-    //TODO:  Handle the token generation.
-
     const { restaurantLoginEmailOrPhone, password } = req.body;
 
     if(!password || !restaurantLoginEmailOrPhone) {

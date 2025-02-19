@@ -6,9 +6,13 @@ const router = express.Router();
 
 router.post('/register', registerRestaurant);
 router.post('/login', loginRestaurant);
-router.get('/get-restaurants', getRestaurants);
-router.get('/get-restaurant/:restaurantId', authorize, getRestaurantById);
-router.put('/update-restaurant/:restaurantId', updateRestaurant);
-router.delete('/delete-restaurant/:restaurantId', deleteRestaurant);
+router.post('/logout', (req, res) => {
+    res.send({title: "Logout"})
+})
+
+router.get('/', getRestaurants);
+router.get('/:restaurantId', authorize, getRestaurantById);
+router.put('/:restaurantId', updateRestaurant);
+router.delete('/:restaurantId', deleteRestaurant);
 
 export default router;
